@@ -50,25 +50,8 @@ function Board() {
     }
   };
 
-  const getSkinStyle = () => {
-    // Base style for the board container
-    const base = {
-      padding: "40px",
-      paddingTop: "100px",
-      minHeight: "100vh",
-      color: theme.colors.text,
-      fontFamily: 'Inter, sans-serif',
-      position: 'relative',
-      overflow: 'hidden', // Ensure pseudo-elements don't overflow
-      backgroundColor: theme.colors.boardBackground || theme.colors.background, // Use darker board background
-      transition: 'background-color 0.3s ease'
-    };
-    return base;
-  };
-
   const renderSkinBackground = () => {
     switch (boardSkin) {
-
       case 'ocean':
         return (
           <>
@@ -157,10 +140,16 @@ function Board() {
   };
 
   return (
-    <div style={getSkinStyle()}>
+    <div
+      className="relative overflow-hidden min-h-screen p-4 pt-24 md:p-10 md:pt-24 transition-colors duration-300 font-sans"
+      style={{
+        color: theme.colors.text,
+        backgroundColor: theme.colors.boardBackground || theme.colors.background
+      }}
+    >
       {renderSkinBackground()}
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div className="relative z-10">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -170,15 +159,7 @@ function Board() {
             items={notes.map((n) => n.id)}
             strategy={rectSortingStrategy}
           >
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "40px", // Increased gap
-                alignItems: "flex-start",
-                justifyContent: 'center'
-              }}
-            >
+            <div className="flex flex-wrap gap-4 md:gap-10 items-start justify-center">
               {notes.map((note) => (
                 <SortableItem key={note.id} id={note.id}>
                   {note.type === "checklist" && (
@@ -212,32 +193,9 @@ function Board() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsModalOpen(true)}
+        className="fixed bottom-4 right-4 md:bottom-10 md:right-10 w-[60px] h-[60px] md:w-[70px] md:h-[70px] rounded-full text-white border-none text-2xl md:text-[28px] cursor-pointer shadow-lg flex items-center justify-center transition-transform duration-200 z-50 hover:scale-110 hover:shadow-xl"
         style={{
-          position: "fixed",
-          bottom: "40px",
-          right: "40px",
-          width: "70px", // Larger FAB
-          height: "70px",
-          borderRadius: "50%",
           backgroundColor: theme.colors.primary,
-          color: "#fff",
-          border: "none",
-          fontSize: "28px",
-          cursor: "pointer",
-          boxShadow: "0 6px 16px rgba(0,0,0,0.2)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "transform 0.2s, box-shadow 0.2s",
-          zIndex: 100
-        }}
-        onMouseOver={(e) => {
-          e.currentTarget.style.transform = 'scale(1.1)';
-          e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.3)';
-        }}
-        onMouseOut={(e) => {
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.2)';
         }}
       >
         <FaPlus />

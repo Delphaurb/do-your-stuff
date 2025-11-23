@@ -87,26 +87,16 @@ function Calendar() {
     };
 
     return (
-        <div style={{ padding: '40px', paddingTop: '100px', backgroundColor: theme.colors.background, minHeight: '100vh', color: theme.colors.text, fontFamily: 'Inter, sans-serif' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '900px', margin: '0 auto 30px' }}>
-                <button onClick={prevMonth} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: theme.colors.text, opacity: 0.7, transition: 'opacity 0.2s' }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.7}>&lt;</button>
-                <h1 style={{ color: theme.colors.text, fontSize: '2rem', fontWeight: '700' }}>{format(currentMonth, "MMMM yyyy")}</h1>
-                <button onClick={nextMonth} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: theme.colors.text, opacity: 0.7, transition: 'opacity 0.2s' }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.7}>&gt;</button>
+        <div className="p-4 pt-24 md:p-10 md:pt-24 min-h-screen font-sans" style={{ backgroundColor: theme.colors.background, color: theme.colors.text }}>
+            <div className="flex justify-between items-center max-w-full md:max-w-[900px] mx-auto mb-6 md:mb-8">
+                <button onClick={prevMonth} className="bg-transparent border-none text-2xl cursor-pointer opacity-70 hover:opacity-100 transition-opacity" style={{ color: theme.colors.text }}>&lt;</button>
+                <h1 className="text-xl md:text-2xl font-bold" style={{ color: theme.colors.text }}>{format(currentMonth, "MMMM yyyy")}</h1>
+                <button onClick={nextMonth} className="bg-transparent border-none text-2xl cursor-pointer opacity-70 hover:opacity-100 transition-opacity" style={{ color: theme.colors.text }}>&gt;</button>
             </div>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                gap: '1px',
-                maxWidth: '900px',
-                margin: '0 auto',
-                backgroundColor: 'rgba(0,0,0,0.05)',
-                border: '1px solid rgba(0,0,0,0.05)',
-                borderRadius: '12px',
-                overflow: 'hidden'
-            }}>
+            <div className="grid grid-cols-7 gap-[1px] max-w-full md:max-w-[900px] mx-auto bg-black/5 border border-black/5 rounded-xl overflow-hidden">
                 {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                    <div key={day} style={{ textAlign: 'center', fontWeight: '600', padding: '15px', backgroundColor: theme.colors.surface, fontSize: '0.9rem', color: theme.colors.text, opacity: 0.8 }}>{day}</div>
+                    <div key={day} className="text-center font-semibold p-2 md:p-4 text-xs md:text-sm opacity-80" style={{ backgroundColor: theme.colors.surface, color: theme.colors.text }}>{day}</div>
                 ))}
 
                 {allDays.map((day, index) => {
@@ -118,48 +108,33 @@ function Calendar() {
                         <div
                             key={day.toString()}
                             onClick={() => handleDayClick(day)}
+                            className="h-16 md:h-[120px] p-2 md:p-3 cursor-pointer relative transition-colors"
                             style={{
-                                height: '120px',
                                 backgroundColor: theme.colors.surface,
-                                padding: '10px',
-                                cursor: 'pointer',
                                 opacity: isCurrentMonth ? 1 : 0.4,
-                                position: 'relative',
-                                transition: 'background-color 0.2s',
                             }}
                             onMouseOver={(e) => (e.currentTarget.style.backgroundColor = isCurrentMonth ? 'rgba(0,0,0,0.02)' : theme.colors.surface)}
                             onMouseOut={(e) => (e.currentTarget.style.backgroundColor = theme.colors.surface)}
                         >
-                            <div style={{
-                                fontWeight: isToday ? '700' : '500',
-                                marginBottom: '8px',
-                                fontSize: '0.9rem',
-                                width: '24px',
-                                height: '24px',
-                                borderRadius: '50%',
-                                backgroundColor: isToday ? theme.colors.primary : 'transparent',
-                                color: isToday ? '#fff' : 'inherit',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
+                            <div
+                                className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full mb-1 md:mb-2 text-xs md:text-sm"
+                                style={{
+                                    fontWeight: isToday ? '700' : '500',
+                                    backgroundColor: isToday ? theme.colors.primary : 'transparent',
+                                    color: isToday ? '#fff' : 'inherit',
+                                }}
+                            >
                                 {format(day, dateFormat)}
                             </div>
 
                             {event && (
-                                <div style={{
-                                    fontSize: '0.75rem',
-                                    backgroundColor: event.color || theme.colors.primary,
-                                    color: '#fff',
-                                    padding: '4px 8px',
-                                    borderRadius: '4px',
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                    fontWeight: '500'
-                                }}>
-                                    {event.isRecurring && <span style={{ opacity: 0.8, marginRight: '4px' }}>↻</span>}
+                                <div
+                                    className="text-[0.6rem] md:text-xs text-white px-1 md:px-2 py-1 rounded whitespace-nowrap overflow-hidden text-ellipsis shadow-sm font-medium"
+                                    style={{
+                                        backgroundColor: event.color || theme.colors.primary,
+                                    }}
+                                >
+                                    {event.isRecurring && <span className="opacity-80 mr-1">↻</span>}
                                     {event.description || 'Event'}
                                 </div>
                             )}

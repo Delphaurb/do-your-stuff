@@ -9,62 +9,73 @@ function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
-  const navItemStyle = (path) => ({
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '8px 16px',
-    borderRadius: '20px',
-    textDecoration: 'none',
-    color: isActive(path) ? '#fff' : theme.colors.text,
-    backgroundColor: isActive(path) ? theme.colors.primary : 'transparent',
-    fontWeight: isActive(path) ? '600' : '500',
-    transition: 'all 0.2s ease',
-    opacity: isActive(path) ? 1 : 0.7,
-  });
+  const navItemClass = (path) => `
+    flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-full no-underline transition-all duration-200
+    ${isActive(path)
+      ? 'text-white font-semibold opacity-100'
+      : 'font-medium opacity-70 hover:opacity-100'}
+  `;
 
   return (
-    <nav style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      height: '70px',
-      backgroundColor: theme.colors.surface,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 40px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-      zIndex: 1000,
-      backdropFilter: 'blur(10px)',
-      borderBottom: `1px solid rgba(0,0,0,0.05)`
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <h1 style={{
-          fontSize: '1.5rem',
-          fontWeight: '700',
-          color: theme.colors.text,
-          letterSpacing: '-0.5px'
-        }}>Do your stuff.</h1>
+    <nav
+      className="fixed top-0 left-0 right-0 h-[70px] flex items-center justify-between px-4 md:px-10 shadow-sm z-50 backdrop-blur-md border-b border-black/5"
+      style={{
+        backgroundColor: theme.colors.surface,
+      }}
+    >
+      <div className="flex items-center gap-2">
+        <h1
+          className="text-xl md:text-2xl font-bold tracking-tighter"
+          style={{ color: theme.colors.text }}
+        >
+          Do your stuff.
+        </h1>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <Link to="/" style={navItemStyle('/')}>
+      <div className="flex gap-1 md:gap-2">
+        <Link
+          to="/"
+          className={navItemClass('/')}
+          style={{
+            backgroundColor: isActive('/') ? theme.colors.primary : 'transparent',
+            color: isActive('/') ? '#fff' : theme.colors.text
+          }}
+        >
           <FaThLarge size={16} />
-          <span>Board</span>
+          <span className="hidden md:inline">Board</span>
         </Link>
-        <Link to="/calendar" style={navItemStyle('/calendar')}>
+        <Link
+          to="/calendar"
+          className={navItemClass('/calendar')}
+          style={{
+            backgroundColor: isActive('/calendar') ? theme.colors.primary : 'transparent',
+            color: isActive('/calendar') ? '#fff' : theme.colors.text
+          }}
+        >
           <FaCalendarAlt size={16} />
-          <span>Calendar</span>
+          <span className="hidden md:inline">Calendar</span>
         </Link>
-        <Link to="/finance" style={navItemStyle('/finance')}>
+        <Link
+          to="/finance"
+          className={navItemClass('/finance')}
+          style={{
+            backgroundColor: isActive('/finance') ? theme.colors.primary : 'transparent',
+            color: isActive('/finance') ? '#fff' : theme.colors.text
+          }}
+        >
           <FaWallet size={16} />
-          <span>Finance</span>
+          <span className="hidden md:inline">Finance</span>
         </Link>
-        <Link to="/settings" style={navItemStyle('/settings')}>
+        <Link
+          to="/settings"
+          className={navItemClass('/settings')}
+          style={{
+            backgroundColor: isActive('/settings') ? theme.colors.primary : 'transparent',
+            color: isActive('/settings') ? '#fff' : theme.colors.text
+          }}
+        >
           <FaCog size={16} />
-          <span>Settings</span>
+          <span className="hidden md:inline">Settings</span>
         </Link>
       </div>
     </nav>

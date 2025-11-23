@@ -45,60 +45,39 @@ const AddNoteModal = ({ onClose, onAdd }) => {
 
   return (
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
-      }}
+      className="fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center z-[1000]"
       onClick={onClose}
     >
       <div
+        className="p-8 rounded-2xl w-[90%] max-w-[400px] shadow-2xl"
         style={{
           backgroundColor: theme.colors.surface,
-          padding: "30px",
-          borderRadius: "20px",
-          width: "90%",
-          maxWidth: "400px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
           color: theme.colors.text,
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "20px", color: theme.colors.primary }}>
+        <h2
+          className="text-center mb-5 text-xl font-bold"
+          style={{ color: theme.colors.primary }}
+        >
           Add New Note
         </h2>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+        <div className="flex flex-col gap-4">
           {options.map((opt) => (
             <button
               key={opt.id}
               onClick={() => handleSelect(opt.id)}
+              className="flex items-center p-4 border-none rounded-xl cursor-pointer text-left transition-transform duration-200 hover:scale-[1.02]"
               style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "15px",
                 backgroundColor: opt.color,
-                border: "none",
-                borderRadius: "15px",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "transform 0.2s",
                 color: theme.colors.text,
               }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
-              onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
-              <div style={{ marginRight: "15px", opacity: 0.7 }}>{opt.icon}</div>
+              <div className="mr-4 opacity-70">{opt.icon}</div>
               <div>
-                <div style={{ fontWeight: "bold", fontSize: "1.1rem" }}>{opt.title}</div>
-                <div style={{ fontSize: "0.9rem", opacity: 0.8 }}>{opt.subtitle}</div>
+                <div className="font-bold text-lg">{opt.title}</div>
+                <div className="text-sm opacity-80">{opt.subtitle}</div>
               </div>
             </button>
           ))}
@@ -106,15 +85,9 @@ const AddNoteModal = ({ onClose, onAdd }) => {
 
         <button
           onClick={onClose}
+          className="mt-5 w-full p-2 bg-transparent border-none cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
           style={{
-            marginTop: "20px",
-            width: "100%",
-            padding: "10px",
-            background: "transparent",
-            border: "none",
             color: theme.colors.text,
-            cursor: "pointer",
-            opacity: 0.6,
           }}
         >
           Cancel

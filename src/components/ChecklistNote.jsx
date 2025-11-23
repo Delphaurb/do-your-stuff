@@ -49,18 +49,10 @@ function ChecklistNote({ id, title, items, color, onUpdate, onDelete }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="w-full md:w-[360px] min-h-[320px] rounded-xl p-6 shadow-md relative flex flex-col transition-all duration-200"
       style={{
-        width: "360px",
-        minHeight: "320px",
         backgroundColor: color || theme.colors.noteChecklist,
-        borderRadius: "12px",
-        padding: "24px",
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
         color: theme.colors.text,
-        transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s",
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: 'center', marginBottom: '20px' }}>
