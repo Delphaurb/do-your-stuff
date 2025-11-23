@@ -1,0 +1,279 @@
+import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
+import { useData } from '../context/DataContext';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, subMonths, isSameMonth, isSameDay, addDays, parseISO, isWithinInterval, getDate } from 'date-fns';
+
+function Calendar() {
+    const { theme } = useTheme();
+    const { events, addEvent, updateEvent, deleteEvent } = useData();
+    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
+
+    const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+    const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(monthStart);
+    const startDate = startOfWeek(monthStart);
+    const endDate = endOfWeek(monthEnd);
+
+    const dateFormat = "d";
+    const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+
+    const handleDayClick = (date) => {
+        setSelectedDate(date);
+    };
+
+    const handleSaveEvent = (data) => {
+        if (selectedDate) {
+            const dateStr = format(selectedDate, 'yyyy-MM-dd');
+
+            // Check if event exists for this date to update it, or create new
+            const existingEvent = events.find(e => e.date === dateStr && !e.recurring); // Simple check for single day events
+
+            if (existingEvent) {
+                updateEvent(existingEvent.id, data);
+            } else {
+                addEvent({
+                    id: Date.now(),
+                    date: dateStr,
+                    ...data
+                });
+            }
+            setSelectedDate(null);
+        }
+    };
+
+    const getEventForDay = (day) => {
+        const dayKey = format(day, 'yyyy-MM-dd');
+
+        // 1. Check for exact date match
+        const exactMatch = events.find(e => e.date === dayKey);
+        if (exactMatch) return exactMatch;
+
+        // 2. Check for multi-day and recurring
+        for (const event of events) {
+            if (!event.date) continue;
+
+            // Multi-day
+            if (event.endDate && event.endDate !== event.date) {
+                const start = parseISO(event.date);
+                const end = parseISO(event.endDate);
+                if (isWithinInterval(day, { start, end })) {
+                    return { ...event, isMultiDay: true, isStart: isSameDay(day, start) };
+                }
+            }
+
+            // Recurring
+            if (event.recurring && event.recurring !== 'none') {
+                const start = parseISO(event.date);
+                if (day >= start) {
+                    if (event.recurring === 'weekly' && day.getDay() === start.getDay()) {
+                        return { ...event, isRecurring: true };
+                    }
+                    if (event.recurring === 'monthly' && getDate(day) === getDate(start)) {
+                        return { ...event, isRecurring: true };
+                    }
+                }
+            }
+        }
+        return null;
+    };
+
+    // Helper to get initial data for modal
+    const getInitialModalData = (date) => {
+        const dayKey = format(date, 'yyyy-MM-dd');
+        return events.find(e => e.date === dayKey) || {};
+    };
+
+    return (
+        <div style={{ padding: '40px', paddingTop: '100px', backgroundColor: theme.colors.background, minHeight: '100vh', color: theme.colors.text, fontFamily: 'Inter, sans-serif' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '900px', margin: '0 auto 30px' }}>
+                <button onClick={prevMonth} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: theme.colors.text, opacity: 0.7, transition: 'opacity 0.2s' }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.7}>&lt;</button>
+                <h1 style={{ color: theme.colors.text, fontSize: '2rem', fontWeight: '700' }}>{format(currentMonth, "MMMM yyyy")}</h1>
+                <button onClick={nextMonth} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: theme.colors.text, opacity: 0.7, transition: 'opacity 0.2s' }} onMouseOver={e => e.target.style.opacity = 1} onMouseOut={e => e.target.style.opacity = 0.7}>&gt;</button>
+            </div>
+
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: '1px',
+                maxWidth: '900px',
+                margin: '0 auto',
+                backgroundColor: 'rgba(0,0,0,0.05)',
+                border: '1px solid rgba(0,0,0,0.05)',
+                borderRadius: '12px',
+                overflow: 'hidden'
+            }}>
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                    <div key={day} style={{ textAlign: 'center', fontWeight: '600', padding: '15px', backgroundColor: theme.colors.surface, fontSize: '0.9rem', color: theme.colors.text, opacity: 0.8 }}>{day}</div>
+                ))}
+
+                {allDays.map((day, index) => {
+                    const event = getEventForDay(day);
+                    const isCurrentMonth = isSameMonth(day, monthStart);
+                    const isToday = isSameDay(day, new Date());
+
+                    return (
+                        <div
+                            key={day.toString()}
+                            onClick={() => handleDayClick(day)}
+                            style={{
+                                height: '120px',
+                                backgroundColor: theme.colors.surface,
+                                padding: '10px',
+                                cursor: 'pointer',
+                                opacity: isCurrentMonth ? 1 : 0.4,
+                                position: 'relative',
+                                transition: 'background-color 0.2s',
+                            }}
+                            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = isCurrentMonth ? 'rgba(0,0,0,0.02)' : theme.colors.surface)}
+                            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = theme.colors.surface)}
+                        >
+                            <div style={{
+                                fontWeight: isToday ? '700' : '500',
+                                marginBottom: '8px',
+                                fontSize: '0.9rem',
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '50%',
+                                backgroundColor: isToday ? theme.colors.primary : 'transparent',
+                                color: isToday ? '#fff' : 'inherit',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}>
+                                {format(day, dateFormat)}
+                            </div>
+
+                            {event && (
+                                <div style={{
+                                    fontSize: '0.75rem',
+                                    backgroundColor: event.color || theme.colors.primary,
+                                    color: '#fff',
+                                    padding: '4px 8px',
+                                    borderRadius: '4px',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                    fontWeight: '500'
+                                }}>
+                                    {event.isRecurring && <span style={{ opacity: 0.8, marginRight: '4px' }}>↻</span>}
+                                    {event.description || 'Event'}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+
+            {selectedDate && (
+                <DayModal
+                    date={selectedDate}
+                    initialData={getInitialModalData(selectedDate)}
+                    onClose={() => setSelectedDate(null)}
+                    onSave={handleSaveEvent}
+                    theme={theme}
+                />
+            )}
+        </div>
+    );
+}
+
+function DayModal({ date, initialData, onClose, onSave, theme }) {
+    const [color, setColor] = useState(initialData.color || '#1e88e5');
+    const [description, setDescription] = useState(initialData.description || '');
+    const [endDate, setEndDate] = useState(initialData.endDate || format(date, 'yyyy-MM-dd'));
+    const [recurring, setRecurring] = useState(initialData.recurring || 'none');
+
+    const colors = [
+        '#d32f2f', '#c2185b', '#7b1fa2', '#512da8', '#303f9f',
+        '#1976d2', '#0288d1', '#0097a7', '#00796b', '#388e3c',
+        '#689f38', '#afb42b', '#fbc02d', '#ffa000', '#f57c00',
+        '#e64a19', '#5d4037', '#616161', '#455a64'
+    ];
+
+    return (
+        <div style={{
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000
+        }} onClick={onClose}>
+            <div style={{
+                backgroundColor: theme.colors.surface, padding: '30px', borderRadius: '16px', width: '90%', maxWidth: '450px',
+                color: theme.colors.text, boxShadow: '0 20px 50px rgba(0,0,0,0.2)'
+            }} onClick={e => e.stopPropagation()}>
+                <h2 style={{ marginBottom: '24px', fontSize: '1.5rem', fontWeight: '700' }}>Edit {format(date, 'MMM d, yyyy')}</h2>
+
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ display: 'block', marginBottom: '12px', fontWeight: '600', fontSize: '0.9rem' }}>Color Label</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                        {colors.map(c => (
+                            <div
+                                key={c}
+                                onClick={() => setColor(c)}
+                                style={{
+                                    width: '28px', height: '28px', borderRadius: '50%', backgroundColor: c,
+                                    cursor: 'pointer', border: color === c ? `2px solid ${theme.colors.text}` : '2px solid transparent',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)', transition: 'transform 0.1s'
+                                }}
+                                onMouseOver={e => e.target.style.transform = 'scale(1.1)'}
+                                onMouseOut={e => e.target.style.transform = 'scale(1)'}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ display: 'block', marginBottom: '12px', fontWeight: '600', fontSize: '0.9rem' }}>Description</label>
+                    <textarea
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        style={{
+                            width: '100%', minHeight: '100px', padding: '12px', borderRadius: '8px',
+                            border: '1px solid rgba(0,0,0,0.1)', backgroundColor: 'rgba(255,255,255,0.5)', outline: 'none',
+                            fontFamily: 'Inter, sans-serif', color: theme.colors.text, fontSize: '0.95rem'
+                        }}
+                        placeholder="Add event details..."
+                    />
+                </div>
+
+                <div style={{ display: 'flex', gap: '20px', marginBottom: '30px' }}>
+                    <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem' }}>End Date</label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={e => setEndDate(e.target.value)}
+                            min={format(date, 'yyyy-MM-dd')}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}
+                        />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', fontSize: '0.9rem' }}>Recurring</label>
+                        <select
+                            value={recurring}
+                            onChange={e => setRecurring(e.target.value)}
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)', background: 'rgba(255,255,255,0.5)', fontFamily: 'Inter, sans-serif' }}
+                        >
+                            <option value="none">None</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <button onClick={onClose} style={{ padding: '10px 20px', border: 'none', background: 'transparent', cursor: 'pointer', color: theme.colors.text, fontWeight: '600' }}>Cancel</button>
+                    <button onClick={() => onSave({ color, description, endDate, recurring })} style={{
+                        padding: '10px 24px', border: 'none', borderRadius: '8px',
+                        backgroundColor: theme.colors.primary, color: '#fff', cursor: 'pointer', fontWeight: '600',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                    }}>Save Event</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default Calendar;

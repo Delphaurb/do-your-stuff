@@ -1,43 +1,29 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import AddNoteBox from "./components/AddNoteBox";
-
-const BoardPage = () => (
-  <div className="flex justify-center items-start pt-20 min-h-screen bg-gradient-to-b from-[#D2B48C] to-[#A67B5B]">
-    <AddNoteBox />
-  </div>
-);
-
-const CalendarPage = () => (
-  <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-[#D2B48C] to-[#A67B5B] text-amber-900">
-    Calendar Page (coming soon)
-  </div>
-);
-
-const SettingsPage = () => (
-  <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-[#D2B48C] to-[#A67B5B] text-amber-900">
-    Settings Page (coming soon)
-  </div>
-);
+import Board from "./pages/board.jsx";
+import Calendar from "./pages/Calendar.jsx";
+import Settings from "./pages/Settings.jsx";
+import Finance from './pages/Finance.jsx';
+import { ThemeProvider } from "./context/ThemeContext";
+import { DataProvider } from "./context/DataContext";
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen font-comfortaa">
-        {/* Navbar appears on all pages */}
-        <Navbar />
-
-        {/* Main Content */}
-        <main>
+    <ThemeProvider>
+      <DataProvider>
+        <Router>
+          <Navbar />
           <Routes>
-            <Route path="/" element={<BoardPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/" element={<Board />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/finance" element={<Finance />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </main>
-      </div>
-    </Router>
+        </Router>
+      </DataProvider>
+    </ThemeProvider>
   );
 }
 
-export default App;
+export default App; // ✅ IMPORTANT

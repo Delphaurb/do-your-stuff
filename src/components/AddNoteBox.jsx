@@ -1,50 +1,63 @@
+// src/components/AddNoteBox.jsx
 import React, { useState } from "react";
-import { Plus } from "lucide-react";
 
-export default function AddNoteBox() {
+export default function AddNoteBox({ onAddNote }) {
   const [showOptions, setShowOptions] = useState(false);
 
   return (
-    <div className="w-72 h-72 mx-auto mt-10 p-4 rounded-2xl shadow-lg bg-gradient-to-br from-yellow-100 to-yellow-200 font-comfortaa relative transition-all duration-500">
-      {/* Default View — Sticky Note */}
-      {!showOptions && (
-        <div className="flex flex-col justify-between h-full animate-fadeIn">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Do your stuff.</h2>
-            <p className="text-gray-600 text-sm">
-              Write down your thoughts, ideas, or plans here.
-            </p>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={() => setShowOptions(true)}
-              className="p-3 rounded-full bg-white shadow hover:bg-yellow-300 transition-colors"
-            >
-              <Plus className="w-6 h-6 text-gray-800" />
-            </button>
-          </div>
+    <div
+      className="border-2 border-dashed border-gray-300 rounded-2xl p-6 w-72 h-44 text-center shadow-sm bg-white transition-all duration-300"
+    >
+      {!showOptions ? (
+        <div
+          onClick={() => setShowOptions(true)}
+          className="cursor-pointer flex flex-col items-center justify-center h-full"
+        >
+          <span className="text-5xl text-gray-400">+</span>
+          <p className="text-gray-500 mt-2 font-medium">Add Note</p>
         </div>
-      )}
+      ) : (
+        <div className="flex flex-col gap-3">
+          <h3 className="text-left font-semibold text-gray-700 mb-1">
+            Add New Note
+          </h3>
 
-      {/* Options View — Replaces Sticky Note Content */}
-      {showOptions && (
-        <div className="flex flex-col justify-between h-full animate-fadeIn">
-          <ul className="flex flex-col gap-3 text-gray-800 text-base">
-            <li className="p-3 rounded-lg bg-white/70 hover:bg-yellow-300 transition-all cursor-pointer">
-              Change background color
-            </li>
-            <li className="p-3 rounded-lg bg-white/70 hover:bg-yellow-300 transition-all cursor-pointer">
-              Change font style
-            </li>
-            <li className="p-3 rounded-lg bg-white/70 hover:bg-yellow-300 transition-all cursor-pointer">
-              Reset all notes
-            </li>
-          </ul>
+          <button
+            onClick={() => {
+              onAddNote && onAddNote("checklist");
+              setShowOptions(false);
+            }}
+            className="bg-yellow-100 hover:bg-yellow-200 text-left rounded-xl px-4 py-3 transition-all"
+          >
+            <p className="font-medium text-gray-700">Checklist</p>
+            <p className="text-sm text-gray-500">Short-term tasks</p>
+          </button>
+
+          <button
+            className="bg-blue-100 hover:bg-blue-200 text-left rounded-xl px-4 py-3 transition-all"
+            onClick={() => {
+              onAddNote && onAddNote("habit");
+              setShowOptions(false);
+            }}
+          >
+            <p className="font-medium text-gray-700">Habit Tracker</p>
+            <p className="text-sm text-gray-500">Weekly routines</p>
+          </button>
+
+          <button
+            className="bg-green-100 hover:bg-green-200 text-left rounded-xl px-4 py-3 transition-all"
+            onClick={() => {
+              onAddNote && onAddNote("progress");
+              setShowOptions(false);
+            }}
+          >
+            <p className="font-medium text-gray-700">Progress Tracker</p>
+            <p className="text-sm text-gray-500">Long-term goals</p>
+          </button>
 
           <button
             onClick={() => setShowOptions(false)}
-            className="mt-3 w-full py-2 rounded-lg bg-gradient-to-r from-red-400 to-red-500 text-white font-semibold hover:from-red-500 hover:to-red-600 transition-all"
+            className="text-gray-600 mt-1 hover:text-gray-800 text-sm font-medium"
           >
             Cancel
           </button>

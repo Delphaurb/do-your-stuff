@@ -1,38 +1,54 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    
-    <!-- add this near the top inside <head> -->
-<script src="https://cdn.tailwindcss.com"></script>
 
-<!-- optional: configure theme/colors before the CDN loads classes -->
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          coffee: {
-            light: "#f8f5f2",
-            medium: "#b58968",
-            dark: "#4a3f35",
+<head>
+
+  <!-- add this near the top inside <head> -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+
+  <!-- optional: configure theme/colors before the CDN loads classes -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            coffee: {
+              light: "#f8f5f2",
+              medium: "#b58968",
+              dark: "#4a3f35",
+            }
+          },
+          fontFamily: {
+            comfort: ["Poppins", "sans-serif"]
           }
-        },
-        fontFamily: {
-          comfort: ["Poppins", "sans-serif"]
         }
       }
     }
-  }
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap" rel="stylesheet">
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>task-cafe</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Do your stuff.</title>
+  <meta name="description" content="Your daily task tracker and journal to help keep track of your progress." />
+  <meta property="og:title" content="Do your stuff." />
+  <meta property="og:description" content="Your daily task tracker and journal to help keep track of your progress." />
+  <meta property="og:image" content="/logo.png" />
+  <meta property="og:type" content="website" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
